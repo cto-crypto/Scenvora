@@ -40,7 +40,7 @@ var KEY="ikhtiyar_studio_live_v3";
 function initial(){return {route:"guardian",scenes:outlines.map(function(a,i){return{id:"S"+String(i+1).padStart(2,"0"),title:a[0],era:a[1],duration:a[2],location:a[3],summary:a[4],shots:a[5],cast:"Availability ke mutabiq",dialogue:"",audio:"Natural ambience + motivated sound",status:"Plan",notes:""}}),actors:{},tasks:defaultTasks.map(function(x,i){return{id:"T"+i,stage:x[0],title:x[1],done:false,owner:"Director",due:"",notes:""}}),takes:[],footage:[],continuity:[],days:[],releases:[],notes:"",bible:{truth:"",rules:"",nabeel:"",shuja:"",clues:"",ending:""},checks:{}}}
 var state;try{state=Object.assign(initial(),JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){state=initial()}
 var page="desk",sceneFilter="";
-var pages=[["desk","Director Desk"],["scenes","Scene Breakdown"],["onset","On Set"],["story","Story Bible"],["actors","Cast & Availability"],["footage","Footage Vault"],["tasks","Production Tasks"],["shots","Shot Library"],["dialogue","Dialogue Room"],["vfx","VFX & Magic"],["continuity","Continuity"],["schedule","Shoot Calendar"],["release","Release Plan"],["settings","Project & Backup"]];
+var pages=[["desk","Director Desk"],["director","Director Decisions"],["scenes","Scene Breakdown"],["onset","On Set"],["story","Story Bible"],["actors","Cast & Availability"],["footage","Footage Vault"],["tasks","Production Tasks"],["shots","Shot Library"],["dialogue","Dialogue Room"],["vfx","VFX & Magic"],["continuity","Continuity"],["schedule","Shoot Calendar"],["release","Release Plan"],["settings","Project & Backup"]];
 var $=function(s){return document.querySelector(s)}, escapeHTML=function(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function toast(s){var e=$("#toast");e.textContent=s;e.classList.add("show");setTimeout(function(){e.classList.remove("show")},2300)}
@@ -58,8 +58,23 @@ function render(){
 $("#nav").innerHTML=pages.map(function(x,i){return '<button data-go="'+x[0]+'" class="'+(x[0]===page?"active":"")+'"><b>'+String(i+1).padStart(2,"0")+'</b>'+x[1]+'</button>'}).join("");
 $("#bottomnav").innerHTML=[["desk","⌂","Home"],["scenes","▣","Scenes"],["onset","◉","On Set"],["tasks","☷","Tasks"],["story","◇","Bible"]].map(function(x){return '<button class="'+(x[0]===page?'active':'')+'" data-go="'+x[0]+'"><b>'+x[1]+'</b>'+x[2]+'</button>'}).join("");
 $("#crumb").textContent=(pages.find(function(x){return x[0]===page})||[])[1]||"Studio";
-var views={desk:desk,scenes:sceneList,onset:onset,story:story,actors:cast,footage:archive,tasks:tasks,shots:shots,dialogue:dialogue,vfx:vfx,continuity:continuity,schedule:schedule,release:release,settings:settings};
+var views={desk:desk,director:director,scenes:sceneList,onset:onset,story:story,actors:cast,footage:archive,tasks:tasks,shots:shots,dialogue:dialogue,vfx:vfx,continuity:continuity,schedule:schedule,release:release,settings:settings};
 $("#content").innerHTML=views[page]();bind();
+}
+function director(){
+var d=[
+["Actor available nahi","New dialogue us actor ke baghair record nahi ho sakta.","Old footage se 0.5–2s memory fragments; new hand/object inserts; missing actor ko bina context recast na karo.","Close 3s · Archive 1s · Reaction 5s"],
+["Old footage random hai","Old action ka natural context clear nahi.","Pehle clip log: kaun, kya, kis direction? Present trigger aur consequence shoot karo. Har footage use karna lazmi nahi.","Trigger 4s · Memory 1s · Changed choice 6s"],
+["Memory scenes boring ho rahi hain","Same effect har scene mein repeat.","First memory 8–12 frames; next dafa naya detail; reveal mein complete meaning. Har memory ek decision badlay.","Present 5s · Archive 1s · Reaction 5s"],
+["Magic fake lagta hai","Feet float, edge cutout aur background morph visible.","Locked tripod, clean plate, same sunlight, ground contact shadow. Old shot mismatch pe hand insert cut use karo.","Hand 3s · Effect 2s · Wide 5s"],
+["Shuja ka face nazar aa sakta hai","Side reflection aur eye-line character reveal kar raha.","Camera rear three-quarter; reflections check; hands and silhouette. Room lighting consistent; heavy fake voice se bachao.","Back wide 8s · Hands 3s · Empty room 5s"],
+["Comedy mood tod rahi","Forced jokes main mystery se disconnect.","Actor ke natural reactions, pauses, misinterpretation. Har comic beat clue ya character consequence laay.","Two-shot 9s · Reaction 4s"],
+["Final group actors missing","Gathering shoot mein sab actors nahi.","Available cast master; missing actors ka separate reaction coverage; eyeline aur light lock. Story mein absence justify karo.","Master 12s · Singles 8s each"],
+["Alternate reality confusing","Rules har scene ke mutabiq badal rahe.","Story bible mein timeline, powers, memory trigger, Nabeel motive aur cost lock. Har anomaly ko rule se map karo.","Clue 3s · Consequence 7s"],
+["Outdoor sound weak","Wind aur ambient discontinuity.","Close mic, 30s room tone, wild dialogue. Edit mein ambience bridge; music se poor audio hide mat karo.","Ambience 30s · Wild lines 2 takes"],
+["Release permissions pending","Featured villagers ko film ka purpose pata nahi.","Informed permission lo; warna crowd-free wide, reframe ya reshoot. Minors ke liye guardian approval.","Empty plate 10s · Location shot 8s"]];
+return heading("ASSISTANT DIRECTOR / DECISIONS","Director Decisions","Jab scene fail ho, actor unavailable ho, ya VFX fake lagay — agla practical decision yahan milega.")+
+'<div class="note" style="margin-bottom:17px">IKHTIYAR principle: har flashback present mein faisla badlay; har magic shot physical footage par based ho; har clue climax mein meaningful ho.</div><div class="grid">'+d.map(function(x,i){return '<article class="card"><div class="kicker">SOLUTION '+String(i+1).padStart(2,"0")+'</div><h3 style="font:26px Georgia;margin:12px 0">'+x[0]+'</h3><p>'+x[1]+'</p><div class="note"><b>Kya karo:</b> '+x[2]+'</div><div class="mini" style="margin-top:15px">'+x[3]+'</div></article>'}).join("")+'</div>';
 }
 function desk(){
 var ready=state.scenes.filter(function(s){return s.status==="Shot"||s.status==="Edited"}).length;
